@@ -49,7 +49,7 @@ void SRT_algo(vector<process> &P)
 {
     vector<process> p(P.begin(), P.end()); 
     std::sort(p.begin(), p.end(), compareFunc);
-    queue<process> Queue;
+    priority_queue<process> Queue;
 
     int number_of_finished_processes = 0, pointer = 0;
     float elapsed_time = 0;
@@ -71,7 +71,7 @@ void SRT_algo(vector<process> &P)
         }
         if (!Queue.size()) break;
 
-        process current_process = Queue.front();
+        process current_process = Queue.top();
         Queue.pop();
         float expexted_time = elapsed_time + current_process.burst_time;
         if (expexted_time <= next_arrival_time) {
@@ -82,7 +82,7 @@ void SRT_algo(vector<process> &P)
             number_of_finished_processes++;
         }
         else {
-            process tmp;
+            process tmp = current_process;
             if (P[current_process.id].response_time) P[current_process.id].response_time = elapsed_time;
             tmp.burst_time = current_process.burst_time - (next_arrival_time - elapsed_time);
             Queue.push(tmp);

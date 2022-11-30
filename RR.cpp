@@ -49,8 +49,8 @@ void print_result(vector<process> &P) {
 void RR_algo(vector<process> &P)
 {
     vector<process> p(P.begin(), P.end()); 
-    std::sort(p.begin(), p.end(), compareFunc);
-    priority_queue<process> Queue;
+    queue<process> Queue;
+    for(int i = 0; i < P.size(); i++) Queue.push(P[i]);
 
     int number_of_finished_processes = 0, pointer = 0;
     float elapsed_time = 0;
@@ -58,21 +58,9 @@ void RR_algo(vector<process> &P)
 
 
     while (true) {
-        bool inserted = false;
-        while (pointer < number_of_processes && p[pointer].arrival_time <= elapsed_time) {
-            Queue.push(p[pointer]);
-            pointer++;
-            if (pointer==number_of_processes) next_arrival_time = INF;
-            else next_arrival_time = p[pointer].arrival_time;
-            inserted = true;
-        } 
-        if (!inserted && pointer < number_of_processes) {
-            elapsed_time = p[pointer].arrival_time;
-            continue;
-        }
         if (!Queue.size()) break;
 
-        process current_process = Queue.top();
+        process current_process = Queue.front();
         Queue.pop();
         float expexted_time = elapsed_time + current_process.burst_time;
         if (expexted_time <= elapsed_time + quantum_time) {
@@ -83,7 +71,7 @@ void RR_algo(vector<process> &P)
             number_of_finished_processes++;
         }
         else {
-            process tmp;
+            process tmp = current_process;
             if (P[current_process.id].response_time) P[current_process.id].response_time = elapsed_time;
             tmp.burst_time = current_process.burst_time - quantum_time; 
             Queue.push(tmp);
